@@ -1,6 +1,7 @@
 import axios from "axios"
 import qs from "qs"
 import Vue from "vue"
+import router from "../router"
 import {
   erroralert
 } from "./alert"
@@ -8,7 +9,8 @@ import store from "../store"
 // import {successalert} from "./alert"
 //开发环境使用 8080
 let baseUrl = "/api"
-Vue.prototype.$pre = "http://localhost:3000"
+Vue.prototype.$pre = "http://localhost/:3000"
+//  Vue.prototype.$pre = "http://10.10.18.49:3000"
 //生产环境  3000  打包
 // let baseUrl = ""
 // Vue.prototype.$pre = ""
@@ -34,6 +36,7 @@ axios.interceptors.response.use(res => {
   if (!res.data.list) {
     res.data.list = []
   }
+//登录时间限制
   if (res.data.msg === "登录已过期或访问权限受限") {
     //清除用户登录的信息 userInfo
     store.dispatch("changeUser", {})
@@ -48,7 +51,7 @@ axios.interceptors.response.use(res => {
 //登录接口
 export let reqLogin = (user) => {
   return axios({
-    url: baseUrl + "/api/login",
+    url: baseUrl + "/api/userlogin",
     method: "post",
     data: qs.stringify(user)
   })
@@ -450,3 +453,49 @@ export let reqGoodsCount = () => {
     url: baseUrl + "/api/goodscount"
   })
 }
+
+//限时秒杀活动管理
+//限时秒杀添加接口
+export let reqSeckillAdd = (user)=>{
+  return axios({
+    url:baseUrl+"/api/seckadd",
+    method:"post",
+    data:qs.stringify(user)
+  })
+} 
+
+//限时秒杀列表接口
+export let reqSeckillList = (user)=>{
+  return axios({
+    url:baseUrl+"/api/secklist",
+    method:"get",
+    params:user
+  })
+} 
+
+//限时秒杀获取接口
+export let reqSeckillDetail = (user)=>{
+  return axios({
+    url:baseUrl+"/api/seckinfo",
+    method:"get",
+    params:user
+  })
+} 
+
+//限时秒杀修改接口
+export let reqSeckillUpdate = (user)=>{
+  return axios({
+    url:baseUrl+"/api/seckedit",
+    method:"post",
+    data:qs.stringify(user)
+  })
+} 
+
+//限时秒杀删除接口
+export let reqSeckillDel = (user)=>{
+  return axios({
+    url:baseUrl+"/api/seckdelete",
+    method:"post",
+    data:qs.stringify(user)
+  })
+} 

@@ -24,7 +24,6 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" @click="edit(scope.row.id)">编辑</el-button>
-          <!-- <el-button type="danger" @click="del(scope.row.id)">删除</el-button> -->
           <del-btn @confirm="del(scope.row.id)"></del-btn>
         </template>
       </el-table-column>
@@ -33,33 +32,26 @@
 </template>
 
 <script>
+import {mapActions,mapGetters} from "vuex"
 import { reqBannerDel } from "../../../utils/http";
 import { successalert } from "../../../utils/alert";
 export default {
-  props: ["list"],
- 
+  // props: ["list"],
+ computed:{
+   ...mapGetters({
+     list:"banner/list"
+   })
+ },
   methods: {
-    // del(id) {
-    //   this.$confirm("你确定要删除么？", "提示", {
-    //     comfirmButtonText: "删除",
-    //     comfirmButtonText: "取消",
-    //     type: "warning",
-    //   })
-    //     .then(() => {
-    //       reqBannerDel({ id: id }).then((res) => {
-    //         if (res.data.code === 200) {
-    //           successalert(res.data.msg);
-    //           this.$emit("init");
-    //         }
-    //       });
-    //     })
-    //     .catch(() => {});
-    // },
+    ...mapActions({
+     reqList:"banner/reqList"
+    }),
     del(id){
       reqBannerDel({ id: id }).then((res)=>{
           if (res.data.code === 200) {
              successalert(res.data.msg);
-             this.$emit("init");
+            //  this.$emit("init");
+            this.reqList();
             }
           }).catch(() => {});
      
@@ -68,6 +60,9 @@ export default {
       this.$emit("edit", id);
     },
   },
+  mounted(){
+    this.reqList();
+  }
 };
 </script>
 

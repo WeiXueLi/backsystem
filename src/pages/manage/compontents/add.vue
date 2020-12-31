@@ -4,15 +4,20 @@
       <!-- Form -->
       <el-form :model="user">
         <el-form-item label="所属角色" label-width="100px">
-          <el-select v-model="user.roleid" >
+          <el-select v-model="user.roleid">
             <el-option label="----请选择----" :value="0" disabled></el-option>
-            <el-option v-for="item in rolelist" :key="item.id" :value="item.id" :label="item.rolename"></el-option>
+            <el-option
+              v-for="item in rolelist"
+              :key="item.id"
+              :value="item.id"
+              :label="item.rolename"
+            ></el-option>
           </el-select>
         </el-form-item>
-          <el-form-item label="用户名" label-width="100px">
+        <el-form-item label="用户名" label-width="100px">
           <el-input v-model="user.username" autocomplete="off"></el-input>
-        </el-form-item> 
-          <el-form-item label="密码" label-width="100px">
+        </el-form-item>
+        <el-form-item label="密码" label-width="100px">
           <el-input v-model="user.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="状态" label-width="100px">
@@ -30,13 +35,18 @@
 </template>
 
 <script>
-import {reqRoleList,reqManageAdd, reqManageDetail, reqManageUpdate } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import {
+  reqRoleList,
+  reqManageAdd,
+  reqManageDetail,
+  reqManageUpdate,
+} from "../../../utils/http";
+import { successalert,erroralert } from "../../../utils/alert";
 export default {
   props: ["info", "list"],
   data() {
     return {
-      rolelist:[],
+      rolelist: [],
       user: {
         roleid: "",
         username: "",
@@ -60,15 +70,37 @@ export default {
         status: 1,
       };
     },
-    add() {
-      reqManageAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.cancel();
-          this.empty();
-          this.$emit("init");
-         
+    //验证封装方法
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.rolename === "") {
+          erroralert("所属角色不能为空");
+          return;
         }
+
+        if (this.user.username === "") {
+          erroralert("用户名不能为空");
+          return;
+        }
+
+        if (this.user.password === "") {
+          erroralert("密码不能为空");
+          return;
+        }
+
+        resolve();
+      });
+    },
+    add() {
+      this.checkProps().then(() => {
+        reqManageAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.cancel();
+            this.empty();
+            this.$emit("init");
+          }
+        });
       });
     },
 
@@ -81,24 +113,25 @@ export default {
       });
     },
     update() {
-      reqManageUpdate(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.cancel();
-          this.empty();
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        reqManageUpdate(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.cancel();
+            this.empty();
+            this.$emit("init");
+          }
+        });
       });
     },
-  
-   },
-  mounted(){
-     reqRoleList().then((res) => {
+  },
+  mounted() {
+    reqRoleList().then((res) => {
       if (res.data.code === 200) {
         this.rolelist = res.data.list;
       }
     });
-  } 
+  },
 };
 </script>
 

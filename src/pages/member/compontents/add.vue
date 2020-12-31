@@ -34,7 +34,7 @@ import {
   reqMemberDetail,
   reqMemberUpdate,
 } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import { successalert,erroralert } from "../../../utils/alert";
 export default {
   props: ["info", "list"],
   data() {
@@ -56,7 +56,7 @@ export default {
       this.info.isshow = false;
     },
     empty() {
-      this.user= {
+      this.user = {
         uid: "",
         nickname: "",
         phone: "",
@@ -73,20 +73,41 @@ export default {
         }
       });
     },
-    update() {
-      reqMemberUpdate(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.cancel();
-          this.empty();
-          this.$emit("init");
+    //验证封装方法
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.phone === "") {
+          erroralert("手机号不能为空");
+          return;
         }
+
+        if (this.user.nickname === "") {
+          erroralert("昵称不能为空");
+          return;
+        }
+
+        if (this.user.password === "") {
+          erroralert("密码不能为空");
+          return;
+        }
+
+        resolve();
+      });
+    },
+    update() {
+      this.checkProps().then(() => {
+        reqMemberUpdate(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.cancel();
+            this.empty();
+            this.$emit("init");
+          }
+        });
       });
     },
   },
-  mounted() {
-   
-  },
+  mounted() {},
 };
 </script>
 

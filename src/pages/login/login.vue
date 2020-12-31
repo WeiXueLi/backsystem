@@ -2,7 +2,8 @@
   <div class="login">
     <div class="con">
       <h3 class="center">登录</h3>
-      <el-form :model="user" :rules="rules">
+      <el-form :model="user" :rules="rules" >
+       
         <el-form-item prop="username">
           <el-input v-model="user.username" placeholder="请输入账号" clearable></el-input>
         </el-form-item>
@@ -50,6 +51,7 @@ export default {
       changeUser: "changeUser",
     }),
     login() {
+      // this.$router.push("/");
       reqLogin(this.user).then((res) => {
         if (res.data.code == 200) {
           this.changeUser(res.data.list);

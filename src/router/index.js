@@ -167,5 +167,6 @@ router.beforeEach((to, from, next) => {
   }
   //否则 next("/login")
   next("/login")
+ 
 })
 export default router

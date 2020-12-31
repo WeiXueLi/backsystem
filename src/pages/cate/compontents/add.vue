@@ -4,20 +4,20 @@
       <!-- Form -->
       <el-form :model="user">
         <el-form-item label="上级分类" label-width="100px">
-          <el-select v-model="user.pid" >
+          <el-select v-model="user.pid">
             <el-option label="----请选择----" :value="0" disabled></el-option>
             <el-option :value="0" label="顶级分类"></el-option>
             <el-option v-for="item in list" :key="item.id" :value="item.id" :label="item.catename"></el-option>
           </el-select>
         </el-form-item>
-          <el-form-item label="分类名称" label-width="100px">
+        <el-form-item label="分类名称" label-width="100px">
           <el-input v-model="user.catename" autocomplete="off"></el-input>
-        </el-form-item> 
+        </el-form-item>
         <el-form-item label="图片" label-width="100px" v-if="user.pid!==0">
           <div class="my-upload">
-          <div class="add">+</div>
-          <img v-if="imgUrl" :src="imgUrl" alt="">
-          <input v-if="info.isshow" type="file" class="ipt" @change="changeImg">
+            <div class="add">+</div>
+            <img v-if="imgUrl" :src="imgUrl" alt />
+            <input v-if="info.isshow" type="file" class="ipt" @change="changeImg" />
           </div>
         </el-form-item>
         <el-form-item label="状态" label-width="100px">
@@ -36,48 +36,46 @@
 
 <script>
 import path from "path";
-import {mapActions,mapGetters} from "vuex"
-import {reqCateAdd, reqCateDetail, reqCateUpdate} from "../../../utils/http";
+import { mapActions, mapGetters } from "vuex";
+import { reqCateAdd, reqCateDetail, reqCateUpdate } from "../../../utils/http";
 import { erroralert, successalert } from "../../../utils/alert";
 export default {
   props: ["info"],
   data() {
     return {
-
-      imgUrl:"",
+      imgUrl: "",
       user: {
-        pid:"",
-        catename:"",
-        img:null,
+        pid: "",
+        catename: "",
+        img: null,
         status: 1,
       },
     };
   },
- 
-  computed:{
+
+  computed: {
     ...mapGetters({
-      "list":"cate/list"
-    })
+      list: "cate/list",
+    }),
   },
   methods: {
-   
-   ...mapActions({
-       "reqList":"cate/reqList"
+    ...mapActions({
+      reqList: "cate/reqList",
     }),
     changeImg(e) {
       let file = e.target.files[0];
-      if(file.size>2*1024*1024){
+      if (file.size > 2 * 1024 * 1024) {
         erroralert("文件大小不能超过2M");
-        return 
+        return;
       }
       let extname = path.extname(file.name);
-      let arr = [".png",".gif",".jpg","jpeg"]
-      if(!arr.some(item=>item===extname)){
-       erroralert("请上传图片");
-       return;
+      let arr = [".png", ".gif", ".jpg", "jpeg"];
+      if (!arr.some((item) => item === extname)) {
+        erroralert("请上传图片");
+        return;
       }
       this.imgUrl = URL.createObjectURL(file);
-      this.user.img=file;
+      this.user.img = file;
     },
 
     cancel() {
@@ -87,7 +85,7 @@ export default {
       this.info.isshow = false;
     },
     empty() {
-      this.imgUrl="";
+      this.imgUrl = "";
       this.user = {
         pid: "",
         catename: "",
@@ -95,16 +93,38 @@ export default {
         status: 1,
       };
     },
-    add() {
-      reqCateAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.cancel();
-          this.empty();
-          // this.$emit("init");
-          this.reqList();
-         
+
+    //验证封装方法
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.pid === "") {
+          erroralert("上级分类不能为空");
+          return;
         }
+
+        if (this.user.catename === "") {
+          erroralert("分类名称不能为空");
+          return;
+        }
+
+        if (!this.user.img) {
+          erroralert("请上传图片");
+          return;
+        }
+        resolve();
+      });
+    },
+
+    add() {
+      this.checkProps().then(() => {
+        reqCateAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.cancel();
+            this.empty();
+            this.reqList();
+          }
+        });
       });
     },
 
@@ -113,24 +133,24 @@ export default {
         if (res.data.code == 200) {
           this.user = res.data.list;
           this.user.id = id;
-          this.imgUrl=this.$pre+this.user.img;
+          this.imgUrl = this.$pre + this.user.img;
         }
       });
     },
     update() {
-      reqCateUpdate(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.cancel();
-          this.empty();
-          // this.$emit("init");
-          this.reqList();
-        }
+      this.checkProps().then(() => {
+        reqCateUpdate(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.cancel();
+            this.empty();
+            this.reqList();
+          }
+        });
       });
-    },
-  
-   },
-  mounted(){} 
+    }
+  },
+  mounted() {},
 };
 </script>
 
@@ -158,7 +178,7 @@ export default {
   opacity: 0;
   cursor: pointer;
 }
-img{
+img {
   width: 100px;
   height: 100px;
   position: absolute;

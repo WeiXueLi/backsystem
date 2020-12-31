@@ -4,6 +4,25 @@
 
 const path = require('path')
 
+// module.exports = {
+//   dev: {
+
+//     // Paths
+//     assetsSubDirectory: 'static',
+//     assetsPublicPath: '/',
+//     //配置代理
+//     proxyTable: {
+//      "/api":{
+//        target:"http://10.10.18.49:3000",
+//        changeOrigin:true,
+//        pathRewrite:{
+//          "^/api":"http://10.10.18.49:3000"
+//        }
+//      }
+//     },
+
+
+
 module.exports = {
   dev: {
 
@@ -12,14 +31,23 @@ module.exports = {
     assetsPublicPath: '/',
     //配置代理
     proxyTable: {
-     "/api":{
-       target:"http://localhost:3000",
-       changeOrigin:true,
-       pathRewrite:{
-         "^/api":"http://localhost:3000"
-       }
-     }
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/api": "http://localhost:3000"
+        }
+      }
     },
+
+
+
+
+
+
+
+
+
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -29,7 +57,7 @@ module.exports = {
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    
+
     /**
      * Source Maps
      */

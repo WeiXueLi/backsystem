@@ -31,7 +31,7 @@ import {
   reqRoleDetail,
   reqRoleUpdate,
 } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import { successalert, erroralert } from "../../../utils/alert";
 export default {
   props: ["info", "list"],
 
@@ -53,14 +53,26 @@ export default {
   },
 
   methods: {
-    add() {
-      this.user.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
-      reqRoleAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.empty();
-          this.$emit("init");
+    //验证封装方法
+    checkProps() {
+      return new Promise((resolve, reject) => {
+        if (this.user.rolename === "") {
+          erroralert("角色名称不能为空");
+          return;
         }
+        resolve();
+      });
+    },
+    add() {
+      this.checkProps().then(() => {
+        this.user.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
+        reqRoleAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.empty();
+            this.$emit("init");
+          }
+        });
       });
     },
     cancel() {
@@ -89,20 +101,22 @@ export default {
     },
 
     update() {
-      this.info.isshow = false;
-      this.user.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
-      reqRoleUpdate(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          if (this.user.id == this.userInfo.roleid) {
-            this.changeUser({});
-            this.$router.push("/login");
-            return;
+      this.checkProps().then(() => {
+        this.info.isshow = false;
+        this.user.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
+        reqRoleUpdate(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            if (this.user.id == this.userInfo.roleid) {
+              this.changeUser({});
+              this.$router.push("/login");
+              return;
+            }
+            this.cancel();
+            this.empty();
+            this.$emit("init");
           }
-          this.cancel();
-          this.empty();
-          this.$emit("init");
-        }
+        });
       });
     },
   },

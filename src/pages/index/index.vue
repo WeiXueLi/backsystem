@@ -16,9 +16,8 @@
             <span slot="title">首页</span>
           </el-menu-item>
           <div v-for="item in userInfo.menus" :key="item.id">
-            <!-- 单纯是菜单 -->
             <el-menu-item v-if="!item.children" :index="item.url">{{item.title}}</el-menu-item>
-            <!-- 有目录，有菜单 -->
+
             <el-submenu :index="item.id+''" v-if="item.children">
               <template slot="title">
                 <i :class="item.icon"></i>
@@ -29,13 +28,38 @@
               </el-menu-item-group>
             </el-submenu>
           </div>
+          <!-- <el-submenu index="1">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>系统设置</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/menu">菜单管理</el-menu-item>
+              <el-menu-item index="/role">角色管理</el-menu-item>
+              <el-menu-item index="/manage">管理员管理</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>-->
+          <!-- <el-submenu index="3">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>商城管理</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/cate">商品分类</el-menu-item>
+              <el-menu-item index="/specs">商品规格</el-menu-item>
+              <el-menu-item index="/goods">商品管理</el-menu-item>
+              <el-menu-item index="/member">会员管理</el-menu-item>
+              <el-menu-item index="/banner">轮播图管理</el-menu-item>
+              <el-menu-item index="/seckill">秒杀活动</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>-->
         </el-menu>
       </el-aside>
       <el-container>
         <el-header>
-          <span>{{userInfo.username}}</span>
-        
-          <el-button type="danger" @click="logout">退出登录</el-button>
+          <span class="text"><i class="el-icon-user"></i>{{userInfo.username}}</span>
+
+          <el-button type="danger" @click="logout" class="eBtn">退出登录</el-button>
         </el-header>
 
         <el-main>
@@ -86,5 +110,14 @@ export default {
 }
 .con {
   padding-top: 20px;
+}
+.text {
+  color: #333;
+  font: bold 30px/20px "宋体";
+  text-align: center;
+}
+.eBtn {
+  float: right;
+  margin: 10px auto;
 }
 </style>

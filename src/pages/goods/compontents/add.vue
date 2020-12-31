@@ -102,7 +102,7 @@ import {
   reqGoodsAdd,
   reqCateList,
   reqGoodsUpdate,
-  reqGoodsDetail
+  reqGoodsDetail,
 } from "../../../utils/http";
 import { erroralert, successalert } from "../../../utils/alert";
 export default {
@@ -217,6 +217,16 @@ export default {
     },
     changeImg(e) {
       let file = e.target.files[0];
+      if (file.size > 2 * 1024 * 1024) {
+        erroralert("文件大小不能超过2M");
+        return;
+      }
+      let extname = path.extname(file.name);
+      let arr = [".png", ".gif", ".jpg", "jpeg"];
+      if (!arr.some((item) => item === extname)) {
+        erroralert("请上传图片");
+        return;
+      }
       this.imgUrl = URL.createObjectURL(file);
       this.user.img = file;
     },
@@ -247,9 +257,9 @@ export default {
       // 规格属性展示的所有选项的列表
       this.showSpecsAttr = [];
     },
-  
+
     getOne(id) {
-      console.log(id)
+      console.log(id);
       reqGoodsDetail({ id: id }).then((res) => {
         if (res.data.code == 200) {
           this.user = res.data.list;
@@ -267,7 +277,7 @@ export default {
         }
       });
     },
-      update() {
+    update() {
       this.checkProps().then(() => {
         this.user.description = this.editor.txt.html();
         let data = {
@@ -287,11 +297,11 @@ export default {
     //修改一级分类
     changeFirstCateId() {
       this.user.second_cateid = "";
-     this.getSecondList();
+      this.getSecondList();
     },
-     //根据一级分类，计算出二级分类的list
+    //根据一级分类，计算出二级分类的list
     getSecondList() {
-      reqCateList({ pid: this.user.first_cateid }).then(res => {
+      reqCateList({ pid: this.user.first_cateid }).then((res) => {
         if (res.data.code == 200) {
           this.secondCateList = res.data.list;
         }
@@ -300,14 +310,13 @@ export default {
     //规格改变
     changeSpecsId() {
       this.user.specsattr = [];
-     this.getShowSpecsAttr();
+      this.getShowSpecsAttr();
     },
     //获取规格属性的展示列表
     getShowSpecsAttr() {
-      let obj = this.specsList.find(item => item.id == this.user.specsid); 
+      let obj = this.specsList.find((item) => item.id == this.user.specsid);
       this.showSpecsAttr = obj ? obj.attrs : [];
     },
-
   },
   mounted() {
     if (this.cateList.length === 0) {

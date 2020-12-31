@@ -25,7 +25,7 @@
       <el-table-column label="操作">
          <template slot-scope="scope">
         <el-button type="primary" @click="edit(scope.row.id)">编辑</el-button>
-        <el-button type="danger" @click="del(scope.row.id)">删除</el-button>
+        <del-btn @confirm="del(scope.row.id)"></del-btn>
         </template>
       </el-table-column>
     </el-table>
@@ -40,20 +40,12 @@ export default {
  
   methods: {
     del(id) {
-      this.$confirm("你确定要删除么？", "提示", {
-        comfirmButtonText: "删除",
-        comfirmButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
           reqMenuDel({ id: id }).then((res) => {
             if (res.data.code === 200) {
               successalert(res.data.msg);
               this.$emit("init");
-            }
-          });
-        })
-        .catch(() => {});
+           }
+        }).catch(() => {});
     },
     edit(id) {
       this.$emit("edit", id);

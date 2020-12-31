@@ -94,18 +94,37 @@ export default {
       };
       this.attrsArr = [{ value: "" }];
     },
+    //验证封装方法
+    checkProps() {
+      return new Promise(resolve => {
+        if (this.user.specsname === "") {
+          erroralert("规格名称不能为空");
+          return;
+        }
+        if (this.attrsArr.some(item => item.value === "")) {
+          erroralert("请输入所有的规格属性");
+          return;
+        }
+        resolve();
+      });
+    },
+
     //点了添加
     add() {
-      this.user.attrs = JSON.stringify(this.attrsArr.map((item) => item.value));
-      //发请求
-      reqSpecsAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          this.cancel();
-          this.empty();
-          successalert(res.data.msg);
-          this.reqList();
-          this.reqTotal();
-        }
+      this.checkProps().then(() => {
+        this.user.attrs = JSON.stringify(
+          this.attrsArr.map((item) => item.value)
+        );
+        //发请求
+        reqSpecsAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            this.cancel();
+            this.empty();
+            successalert(res.data.msg);
+            this.reqList();
+            this.reqTotal();
+          }
+        });
       });
     },
     getOne(id) {
@@ -119,14 +138,16 @@ export default {
       });
     },
     update() {
-      this.user.attrs = JSON.stringify(this.attrs.map((item) => item.value));
-      reqSpecsUpdate(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.cancel();
-          this.empty();
-          this.reqList();
-        }
+      this.checkProps().then(() => {
+        this.user.attrs = JSON.stringify(this.attrs.map((item) => item.value));
+        reqSpecsUpdate(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.cancel();
+            this.empty();
+            this.reqList();
+          }
+        });
       });
     },
   },

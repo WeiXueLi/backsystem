@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import {mapActions,mapGetters} from "vuex";
-import {reqCateList} from "../../utils/http"
+
 import vAdd from "./compontents/add"
 import vList from "./compontents/list"
+import {mapGetters,mapActions} from "vuex"
 export default {
 components:{
   vAdd,

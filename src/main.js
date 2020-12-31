@@ -11,7 +11,7 @@ import ElementUI from "element-ui"
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 Vue.config.productionTip = false
-
+Vue.prototype.$pre="http://localhost:3000"
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -42,6 +42,7 @@
         <el-form-item label="状态" label-width="100px">
           <el-switch v-model="user.status" :active-value="1" :inactive-value="2"></el-switch>
         </el-form-item>
+        {{user}}
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
@@ -55,7 +56,7 @@
 <script>
 import { indexRoutes } from "../../../router";
 import { reqMenuAdd, reqMenuDetail, reqMenuUpdate } from "../../../utils/http";
-import { successalert } from "../../../utils/alert";
+import { successalert, erroralert } from "../../../utils/alert";
 export default {
   props: ["info", "list"],
   data() {
@@ -96,14 +97,41 @@ export default {
         status: 1,
       };
     },
-    add() {
-      reqMenuAdd(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.cancel();
-          this.empty();
-          this.$emit("init");
+    //验证封装方法
+    checkProps() {
+      return new Promise((resolve) => {
+        if (this.user.title === "") {
+          erroralert("菜单名称不能为空");
+          return;
         }
+
+        if (this.user.pid === 0) {
+          if (this.user.icon === "") {
+            erroralert("菜单图标不能为空");
+          }
+          return;
+        }
+
+        if (this.user.pid === 1) {
+          if (this.user.url === "") {
+            erroralert("菜单地址不能为空");
+          }
+          return;
+        }
+
+        resolve();
+      });
+    },
+    add() {
+      this.checkProps().then(() => {
+        reqMenuAdd(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.cancel();
+            this.empty();
+            this.$emit("init");
+          }
+        });
       });
     },
 
@@ -116,13 +144,15 @@ export default {
       });
     },
     update() {
-      reqMenuUpdate(this.user).then((res) => {
-        if (res.data.code == 200) {
-          successalert(res.data.msg);
-          this.cancel();
-          this.empty();
-          this.$emit("init");
-        }
+      this.checkProps().then(() => {
+        reqMenuUpdate(this.user).then((res) => {
+          if (res.data.code == 200) {
+            successalert(res.data.msg);
+            this.cancel();
+            this.empty();
+            this.$emit("init");
+          }
+        });
       });
     },
     changePid() {

@@ -24,7 +24,6 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" @click="edit(scope.row.id)">编辑</el-button>
-          <!-- <el-button type="danger" @click="del(scope.row.id)">删除</el-button> -->
           <del-btn @confirm="del(scope.row.id)"></del-btn>
         </template>
       </el-table-column>
@@ -52,7 +51,6 @@ export default {
         .then((res) => {
           if (res.data.code === 200) {
             successalert(res.data.msg);
-            // this.$emit("init");
             this.reqList();
           }
         })
