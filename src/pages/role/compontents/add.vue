@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-dialog :title="info.isadd?'添加角色':'编辑角色'" :visible.sync="info.isshow" @closed="cancel">
-      {{user}}
       <el-form :model="user">
         <el-form-item label="角色名称" label-width="100px">
           <el-input v-model="user.rolename" autocomplete="off"></el-input>
@@ -13,6 +12,7 @@
         <el-form-item label="状态" label-width="100px">
           <el-switch v-model="user.status" :active-value="1" :inactive-value="2"></el-switch>
         </el-form-item>
+        {{user}}
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -58,6 +58,11 @@ export default {
       return new Promise((resolve, reject) => {
         if (this.user.rolename === "") {
           erroralert("角色名称不能为空");
+          return;
+        }
+        console.log(this.$refs.tree.getCheckedKeys())
+        if (this.$refs.tree.getCheckedKeys().length===0) {
+          erroralert("角色权限不能为空");
           return;
         }
         resolve();

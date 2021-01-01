@@ -123,11 +123,12 @@ export default {
           erroralert("活动名称不能为空");
           return;
         }
-       //时间类型的验证??
-        // if (this.user.begintime === "" && this.user.endtime === "") {
-        //   erroralert("活动期限不能为空");
-        //   return;
-        // }
+       //时间类型的验证ok,因为time是个数组所以定义成undefined
+       console.log(this.time)
+        if (this.time[0] === undefined) {
+          erroralert("活动期限不能为空");
+          return;
+        }
  
         if (this.user.first_cateid=== "") {
           erroralert("一级分类不能为空");
@@ -192,7 +193,6 @@ export default {
     },
     //修改二级分类
     changeSecondCateId() {
-      console.log(111);
       this.user.goodname = "";
       this.getThreeList();
     },
@@ -224,9 +224,7 @@ export default {
         goodsid: "",
         status: 1,
       };
-
       this.secondCateList = [];
-
       this.threeGoodsList = [];
     },
     update() {
